@@ -14,5 +14,10 @@ public class Main {
         System.out.println("\nИтоговые балансы:");
         System.out.println(goldCard);
         System.out.println(regularCard);
+        System.out.println("\nВыписка по карте 44000321:");
+        System.out.println(bank.getCardHistory("44000321"));
+        System.out.println("\nВсего потрачено с 44000321: " + bank.getTotalSpent("44000321"));
+        System.out.println("\nТоп-3 транзакции:");
+        System.out.println(bank.getTop3Transactions());
     }
 }
