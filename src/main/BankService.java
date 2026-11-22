@@ -11,7 +11,7 @@ public class BankService {
     public void addCard(BankCard card) {
         cards.put(card.getCardNumber(), card);
     }
-    public void processPayment(String txId, String cardNumber, double amount) {
+    public ApiResponse<BankCard> processPayment(String txId, String cardNumber, double amount) {
         try {
             if(proccessedTxIds.contains(txId)){
                 throw new IllegalArgumentException("Дубликат транзакции: " + txId);
@@ -22,11 +22,12 @@ public class BankService {
             }
             card.pay(amount);
             proccessedTxIds.add(txId);
+            return ApiResponse.ok("Оплата прошла успешно!. ", card);
         } catch (IllegalArgumentException | InsufficientFundsException e) {
-            System.out.println("Отказ по оплате " + txId + ": " + e.getMessage());
+            return ApiResponse.error(e.getMessage());
         }
     }
-    public void transfer(String txId, String fromCardNum, String toCardNum, double amount){
+    public ApiResponse<BankCard> transfer(String txId, String fromCardNum, String toCardNum, double amount){
         try{
             if(proccessedTxIds.contains(txId)){
                 throw new IllegalArgumentException("Дубликат транзакции ");
@@ -44,12 +45,12 @@ public class BankService {
                 to.deposit(amount);
             }catch (Exception e){
                 from.deposit(amount);
-                System.out.println("Сбой зачисления! Деньги возвращены на карту " + fromCardNum);
                 throw e;
             }
             proccessedTxIds.add(txId);
+            return ApiResponse.ok("Перевод выполнен успешно",  from);
         }catch (IllegalArgumentException | InsufficientFundsException e){
-            System.out.println("Отказ по переводу " + txId + ": " + e.getMessage());
+            return ApiResponse.error(e.getMessage());
         }
     }
 }
